@@ -1,0 +1,229 @@
+# This CRD is part of https://github.com/rancher/helm-project-operator
+apiVersion: helm.cattle.io/v1alpha1
+kind: ProjectHelmChart
+metadata:
+  name: project-monitoring
+spec:
+  helmApiVersion: monitoring.cattle.io/v1alpha1
+  projectNamespaceSelector: null
+  values:
+  # general chart values: https://github.com/rancher/prometheus-federator/blob/main/charts/rancher-project-monitoring/0.2.0-rc3/values.yaml
+    federate:
+      interval: 30s
+    global:
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        privileged: false
+        readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsUser: 1000
+        supplementalGroups:
+        - 1000
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+    alertmanager:
+      alertmanagerSpec:
+        retention: 120h
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
+          supplementalGroups:
+          - 1000
+        # storage:
+        #   volumeClaimTemplate:
+        #     spec:
+        #       storageClassName: nfs
+        #       accessModes: ["ReadWriteOnce"]
+        #       resources:
+        #         requests:
+        #           storage: 1Gi
+        containers:
+          - name: alertmanager
+            #image: mtr.devops.telekom.de/mcsps/alertmanager:v0.25.0
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              privileged: false
+              readOnlyRootFilesystem: true
+          - name: config-reloader
+            #image: ghcr.io/eumelnet/prometheus-operator/prometheus-config-reloader-dev:v0.62.0-1ac9f5e
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              privileged: false
+              readOnlyRootFilesystem: true
+        version: v0.25.0
+    prometheus:
+      prometheusSpec:
+        externalLabels:
+          cluster: CAAS
+        retention: 12d
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              # storageClassName: nfs
+              # accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 1Gi
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
+          supplementalGroups:
+          - 1000
+        containers: |-
+          - name: prometheus
+            #image: docker.io/prom/prometheus:v2.41.0
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              privileged: false
+              readOnlyRootFilesystem: true
+          - name: config-reloader
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              privileged: false
+              readOnlyRootFilesystem: true
+          - name: prometheus-proxy
+            args:
+            - nginx
+            - -g
+            - daemon off;
+            - -c
+            - /nginx/nginx.conf
+            image: mtr.devops.telekom.de/rancher/mirrored-library-nginx:1.21.1-alpine
+            imagePullPolicy: Always
+            ports:
+            - containerPort: 8081
+              name: nginx-http
+              protocol: TCP
+            resources:
+              limits:
+                cpu: 200m
+                memory: 256Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              privileged: false
+              readOnlyRootFilesystem: true
+            volumeMounts:
+            - mountPath: /nginx
+              name: prometheus-nginx
+            - mountPath: /var/cache/nginx
+              name: nginx-home
+        initContainers:
+          - name: init-config-reloader
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              privileged: false
+              readOnlyRootFilesystem: true
+    grafana:
+      adminPassword: prom-operator
+      defaultDashboardsTimezone: cet
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsUser: 1000
+        supplementalGroups:
+        - 1000
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        privileged: false
+        readOnlyRootFilesystem: true
+        runAsGroup: 1000
+        runAsUser: 1000
+      extraContainers: |
+        - name: grafana-proxy
+          args:
+          - nginx
+          - -g
+          - daemon off;
+          - -c
+          - /nginx/nginx.conf
+          image: "{{ template "system_default_registry" . }}{{ .Values.proxy.image.repository }}:{{ .Values.proxy.image.tag }}"
+          ports:
+          - containerPort: 8080
+            name: nginx-http
+            protocol: TCP
+          volumeMounts:
+          - mountPath: /nginx
+            name: grafana-nginx
+          - mountPath: /var/cache/nginx
+            name: nginx-home
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1000
+            runAsUser: 1000
+      sidecar:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 1000
+          runAsUser: 1000

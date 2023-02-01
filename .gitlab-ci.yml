@@ -1,0 +1,29 @@
+image: mtr.devops.telekom.de/mcsps/mcsps-tools:latest
+#
+#
+before_script:
+- apk add openssh-client
+- mkdir -p ~/.ssh/
+- ssh-keyscan github.com >> ~/.ssh/known_hosts
+- chmod 644 ~/.ssh/known_hosts
+- eval $(ssh-agent -s)
+- echo "$GITHUB_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+- echo "finish before_script"
+ 
+stages:
+- deliver-github
+
+deliver-github:
+  stage: deliver-github
+  tags:
+    - k8s-executor
+  script:
+  - git config --global user.name "MCICD Caas Sync"
+  - git config --global user.email "caas-request@telekom.de"
+  - git remote remove github || true
+  - git remote add github git@github.com:caas-team/use-cases.git
+  - git remote -v
+  - git fetch github
+  - git push github --force HEAD:master
+
+# vim: sts=2 sw=2 ts=2 et:
