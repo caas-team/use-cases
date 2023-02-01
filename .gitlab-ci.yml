@@ -24,6 +24,6 @@ deliver-github:
   - git remote add github git@github.com:caas-team/use-cases.git
   - git remote -v
   - git fetch github
-  - git push github --force HEAD:master
+  - git push github --force HEAD:main
 
 # vim: sts=2 sw=2 ts=2 et:
