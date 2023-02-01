@@ -16,7 +16,7 @@ stages:
 deliver-github:
   stage: deliver-github
   tags:
-    - otc_run_docker_l
+    - otc_run_docker_k8s
   script:
   - git config --global user.name "MCICD Caas Sync"
   - git config --global user.email "caas-request@telekom.de"
