@@ -1,0 +1,21 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+  name: np-demoapp
+spec:
+  egress:
+  - ports:
+    - port: 8084
+      protocol: TCP
+    to:
+    - ipBlock:
+        cidr: 10.105.124.65/32
+  ingress:
+  - ports:
+    - port: 9091
+  podSelector: {}
+  policyTypes:
+  - Egress
+  - Ingress
