@@ -22,18 +22,14 @@ spec:
         app: demoapp
     spec:
       containers:
-      - image: mtr.devops.telekom.de/mcsps/mcsps-python:latest
+      - image: mtr.devops.telekom.de/mcsps/python-flask:demo
         imagePullPolicy: IfNotPresent
         name: demoapp
         ports:
-          - containerPort: 5000
-        command: ["sh","-c"]
-        args: ["git clone https://github.com/mcsps/apps && cd apps/flask && gunicorn --bind 127.0.0.1:5000 --access-logfile /dev/stdout wsgi:app"]
+          - containerPort: 9091
         env:
         - name: PYTHONUNBUFFERED
           value: "1"
-        #- name: https_proxy
-        #  value: "http://10.105.124.65:8084"
         - name: APP
           value: "demo"
         resources:
@@ -62,8 +58,6 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - name: workdir
-          mountPath: /home/appuser
         - name: tmp
           mountPath: /tmp
       dnsPolicy: ClusterFirst
@@ -75,8 +69,6 @@ spec:
         - 1000
       terminationGracePeriodSeconds: 3
       volumes:
-      - name: workdir
-        emptyDir: {}
       - name: tmp
         emptyDir:
           medium: Memory
