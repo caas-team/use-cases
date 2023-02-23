@@ -49,14 +49,13 @@ spec:
         # storage:
         #   volumeClaimTemplate:
         #     spec:
-        #       storageClassName: nfs
+        #       storageClassName: longhorn
         #       accessModes: ["ReadWriteOnce"]
         #       resources:
         #         requests:
         #           storage: 1Gi
         containers:
           - name: alertmanager
-            #image: mtr.devops.telekom.de/mcsps/alertmanager:v0.25.0
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -65,7 +64,6 @@ spec:
               privileged: false
               readOnlyRootFilesystem: true
           - name: config-reloader
-            #image: ghcr.io/eumelnet/prometheus-operator/prometheus-config-reloader-dev:v0.62.0-1ac9f5e
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -82,8 +80,10 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
-              # storageClassName: nfs
-              # accessModes: ["ReadWriteOnce"]
+              # dependly on the target cluster, we prefer to use `longhorn`
+              # because `nfs-storage` as default class won't work quite well
+              storageClassName: longhorn
+              accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
                   storage: 1Gi
@@ -101,7 +101,6 @@ spec:
           - 1000
         containers: |-
           - name: prometheus
-            #image: docker.io/prom/prometheus:v2.41.0
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
