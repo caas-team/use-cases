@@ -75,8 +75,10 @@ spec:
     prometheus:
       prometheusSpec:
         externalLabels:
-          cluster: CAAS
-        retention: 12d
+          cluster: t02
+        # choose retention in days or available storage
+        # retention: 12d
+        retentionSize: 1GiB 
         storageSpec:
           volumeClaimTemplate:
             spec:
