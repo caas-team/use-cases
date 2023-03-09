@@ -1,0 +1,15 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sCapabilities
+metadata:
+  name: caask8scapabilities
+  labels:
+    type: namespaced
+spec:
+  enforcementAction: deny
+  match:
+    excludedNamespaces: []
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    requiredDropCapabilities: ["ALL"]

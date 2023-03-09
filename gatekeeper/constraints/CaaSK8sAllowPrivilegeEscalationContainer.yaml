@@ -1,0 +1,13 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sAllowPrivilegeEscalationContainer
+metadata:
+  name: disallow-privilege-escalation-container-dryrun
+  labels:
+    type: namespaced
+spec:
+  enforcementAction: deny
+  match:
+    excludedNamespaces: []
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]

@@ -1,0 +1,20 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sAllowedReposWorkloads
+metadata:
+  name: repo-is-from-trusted-registry-workloads
+  labels:
+    type: global
+spec:
+  enforcementAction: dryrun
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet"]
+  parameters:
+    repos:
+      - dockerhub.devops.telekom.de/
+      - artifactory.devops.telekom.de/
+      - registry.devops.telekom.de/
+      - crm-fn-wbench.workbench.telekom.de/
+      - sdm-wbench.workbench.telekom.de/
+      - mtr.devops.telekom.de/

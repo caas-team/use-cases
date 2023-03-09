@@ -1,0 +1,21 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sAllowedVolumeTypesWorkloads
+metadata:
+  name: allowed-volume-types-workloads
+  labels:
+    type: global
+spec:
+  enforcementAction: dryrun
+  match:
+    excludedNamespaces: []
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet"]
+  parameters:
+    volumes:
+      - configMap
+      - emptyDir
+      - projected
+      - secret
+      - downwardAPI
+      - persistentVolumeClaim

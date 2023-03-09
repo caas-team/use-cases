@@ -1,0 +1,22 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sAllowedRepos
+metadata:
+  name: repo-is-from-trusted-registry
+  labels:
+    type: global
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups:
+          - ""
+        kinds:
+          - Pod
+  parameters:
+    repos:
+      - dockerhub.devops.telekom.de/
+      - artifactory.devops.telekom.de/
+      - registry.devops.telekom.de/
+      - crm-fn-wbench.workbench.telekom.de/
+      - sdm-wbench.workbench.telekom.de/
+      - mtr.devops.telekom.de/

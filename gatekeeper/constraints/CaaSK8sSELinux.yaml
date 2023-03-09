@@ -1,0 +1,16 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sSELinux
+metadata:
+  name: policy-for-selinux
+  labels:
+    type: namespaced
+spec:
+  enforcementAction: deny
+  match:
+    excludedNamespaces: []
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    allowedSELinuxOptions:
+      - user: RunAsAny

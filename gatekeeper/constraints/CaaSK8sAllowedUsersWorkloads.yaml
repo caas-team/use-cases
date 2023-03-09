@@ -1,0 +1,31 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sAllowedUsersWorkloads
+metadata:
+  name: pods-allowed-user-ranges-workloads
+  labels:
+    type: global
+spec:
+  enforcementAction: dryrun
+  match:
+    excludedNamespaces: []
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet"]
+  parameters:
+    runAsUser:
+      rule: MustRunAsNonRoot # MustRunAs # RunAsAny
+    runAsGroup:
+      rule: MustRunAs # MayRunAs # RunAsAny
+      ranges:
+        - min: 1
+          max: 65535
+    supplementalGroups:
+      rule: MustRunAs # MayRunAs # RunAsAny
+      ranges:
+        - min: 1
+          max: 65535
+    fsGroup:
+      rule: MustRunAs # MayRunAs # RunAsAny
+      ranges:
+        - min: 1
+          max: 65535

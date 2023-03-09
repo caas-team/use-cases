@@ -1,0 +1,18 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sRequireProjectAnnotation
+metadata:
+  name: must-have-project-annotation
+  labels:
+    type: global
+spec:
+  # must remain in dry run in all clusters
+  enforcementAction: dryrun
+  match:
+    # local namespace is the standard namespace created in Rancher 2.6.x installations
+    excludedNamespaces:
+      - "local"
+      - "cattle-prometheus-*"
+      - "cattle-externalip-system"
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Namespace"]

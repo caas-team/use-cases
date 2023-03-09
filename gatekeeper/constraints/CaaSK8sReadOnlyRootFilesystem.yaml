@@ -1,0 +1,13 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sReadOnlyRootFilesystem
+metadata:
+  name: must-have-readonlyrootfilesystem
+  labels:
+    type: namespaced
+spec:
+  enforcementAction: deny
+  match:
+    excludedNamespaces: []
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]

@@ -1,0 +1,30 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  annotations:
+    description: Requires namespace annotation to assign a rancher projekt.
+  name: caask8srequireprojectannotation
+spec:
+  crd:
+    spec:
+      names:
+        kind: CaaSK8sRequireProjectAnnotation
+      validation:
+        openAPIV3Schema:
+          properties:
+            repos:
+              description: Check if project annotation is present to prevent namespace creation via kubectl.
+              items:
+                type: string
+              type: array
+          type: object
+  targets:
+    - rego: |
+        package caask8srequireprojectannotation
+
+        violation[{"msg": msg}] {
+          not input.review.object.metadata.annotations["field.cattle.io/projectId"]
+          affectedns := input.review.object.metadata.name
+          msg := sprintf("Please assing a projectID to your namespace: %v.",[affectedns])
+        }
+      target: admission.k8s.gatekeeper.sh

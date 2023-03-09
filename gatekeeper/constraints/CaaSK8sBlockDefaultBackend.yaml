@@ -1,0 +1,12 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sBlockDefaultBackend
+metadata:
+  name: block-default-backend
+  labels:
+    type: global
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: ["extensions", "networking.k8s.io"]
+        kinds: ["Ingress"]

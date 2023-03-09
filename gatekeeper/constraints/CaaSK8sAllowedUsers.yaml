@@ -1,0 +1,31 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CaaSK8sAllowedUsers
+metadata:
+  name: pods-allowed-user-ranges
+  labels:
+    type: namespaced
+spec:
+  enforcementAction: deny
+  match:
+    excludedNamespaces: []
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    runAsUser:
+      rule: MustRunAsNonRoot # MustRunAs # RunAsAny
+    runAsGroup:
+      rule: MustRunAs # MayRunAs # RunAsAny
+      ranges:
+        - min: 1
+          max: 65535
+    supplementalGroups:
+      rule: MustRunAs # MayRunAs # RunAsAny
+      ranges:
+        - min: 1
+          max: 65535
+    fsGroup:
+      rule: MustRunAs # MayRunAs # RunAsAny
+      ranges:
+        - min: 1
+          max: 65535
