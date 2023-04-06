@@ -75,10 +75,12 @@ spec:
     prometheus:
       prometheusSpec:
         externalLabels:
-          cluster: t02
+          cluster: CAAS
         # choose retention in days or available storage
-        # retention: 12d
-        retentionSize: 1GiB 
+        retention: 12d
+        retentionSize: 8GiB
+        storage:
+          enabled: true
         storageSpec:
           volumeClaimTemplate:
             spec:
@@ -88,11 +90,11 @@ spec:
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: 1Gi
+                  storage: 10Gi
         resources:
           limits:
-            cpu: 1000m
-            memory: 1024Mi
+            cpu: 2000m
+            memory: 2048Mi
           requests:
             cpu: 100m
             memory: 128Mi
