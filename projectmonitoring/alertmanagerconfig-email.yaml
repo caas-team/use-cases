@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: email
+spec:
+  receivers:
+    - name: "null"
+    - name: email
+      emailConfigs:
+        - from: "demoapp@example.com"
+          to: "demoapp@example.com"
+          smarthost: "mail.example.com:25"
+          authUsername: "demoapp@example.com"
+          authPassword:
+            key: mailPassword
+            name: alertmanager-email
+  route:
+    continue: true
+    groupBy: ['job']
+    groupWait: 30s
+    groupInterval: 2h
+    repeatInterval: 5m
+    receiver: "null"
+    routes:
+    - continue: true
+      group_interval: 5m
+      group_wait: 30s
+      matchers:
+        - matchType: =
+          name: severity
+          value: critical
+      receiver: email
+---
+apiVersion: v1
+data:
+  mailPassword: xxxxxx
+kind: Secret
+metadata:
+  name: alertmanager-email
