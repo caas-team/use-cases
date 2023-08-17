@@ -10,6 +10,8 @@ spec:
         - from: "demoapp@example.com"
           to: "demoapp@example.com"
           smarthost: "mail.example.com:25"
+          requireTLS: false
+          sendResolved: false          
           authUsername: "demoapp@example.com"
           authPassword:
             key: mailPassword
