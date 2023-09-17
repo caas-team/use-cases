@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: probealarm
+spec:
+  groups:
+  - name: prometheusbuild
+    rules:
+    - alert: ProbeAlarm
+      annotations:
+        message: 'Probealarm'
+      expr: sum(prometheus_build_info)  >= 0
+      for: 10s
+      labels:
+        namespace: demoapp
+        severity: critical
+        job: probejob

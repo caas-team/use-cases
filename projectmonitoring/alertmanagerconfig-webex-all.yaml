@@ -1,0 +1,33 @@
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: webexall
+spec:
+  receivers:
+    - name: webex
+      webexConfigs:
+      - apiURL: 'https://webexapis.com/v1/messages'
+        httpConfig:
+          authorization:
+            type: Bearer
+            credentials:
+              key: WEBEX_TOKEN
+              name: alertmanager-webex
+        roomID: 'xxxxx'
+        sendResolved: true
+        message: '{{ template "webex.text_multiple" . }}'
+  route:
+    groupBy: ['job']
+    groupWait: 30s
+    groupInterval: 1m
+    repeatInterval: 1m
+    receiver: webex
+---
+apiVersion: v1
+data:
+  WEBEX_TOKEN: >-
+    xxxxx
+kind: Secret
+metadata:
+  name: alertmanager-webex
