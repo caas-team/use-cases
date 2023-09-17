@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: excessive-app
+  name: cool-web-app
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: excessive-app
+      app: cool-web-app
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -17,11 +17,11 @@ spec:
   template:
     metadata:
       labels:
-        app: excessive-app
+        app: cool-web-app
     spec:
       containers:
         - image: mtr.devops.telekom.de/mcsps/python-flask:demo
-          name: excessive-app
+          name: cool-web-app
           ports:
             - containerPort: 9091
           env:
@@ -40,11 +40,11 @@ spec:
             runAsGroup: 1000
           resources:
             limits:
-              cpu: 15000m
-              memory: 6Gi
+              cpu: 1000m
+              memory: 1Gi
             requests:
-              cpu: 12000m
-              memory: 4Gi
+              cpu: 100m
+              memory: 100Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
