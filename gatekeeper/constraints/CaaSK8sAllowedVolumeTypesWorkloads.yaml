@@ -3,15 +3,18 @@ kind: CaaSK8sAllowedVolumeTypesWorkloads
 metadata:
   name: allowed-volume-types-workloads
   labels:
-    type: global
+    type: namespaced
 spec:
-  enforcementAction: dryrun
+  enforcementAction: deny
   match:
     excludedNamespaces: []
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
+      - apiGroups: ["batch"]
+        kinds: ["Job"]
   parameters:
+    exemptImages: []
     volumes:
       - configMap
       - emptyDir
@@ -19,3 +22,5 @@ spec:
       - secret
       - downwardAPI
       - persistentVolumeClaim
+      # needed for dynatrace
+      - csi

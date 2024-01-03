@@ -12,6 +12,7 @@ spec:
       - apiGroups: [""]
         kinds: ["Pod"]
   parameters:
+    exemptImages: []
     volumes:
       - configMap
       - emptyDir
@@ -19,3 +20,5 @@ spec:
       - secret
       - downwardAPI
       - persistentVolumeClaim
+      # needed for dynatrace
+      - csi

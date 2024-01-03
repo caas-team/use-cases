@@ -1,0 +1,24 @@
+resources:
+    - CaaSK8sAllowedRepos.yaml
+    - CaaSK8sAllowedUsers.yaml
+    - CaaSK8sAllowedVolumeTypes.yaml
+    - CaaSK8sAllowPrivilegeEscalationContainer.yaml
+    - CaaSK8sCapabilities.yaml
+    - CaaSK8sPrivilegedContainer.yaml
+    - CaaSK8sReadOnlyRootFilesystem.yaml
+    - CaaSK8sRequireProjectAnnotation.yaml
+    - CaaSK8sSELinux.yaml
+    - CaaSK8sBlockWildcardIngress.yaml
+    - CaaSK8sBlockDefaultBackend.yaml
+    - CaaSK8sAllowPrivilegeEscalationContainerWorkloads.yaml
+    - CaaSK8sAllowedReposWorkloads.yaml
+    - CaaSK8sAllowedUsersWorkloads.yaml
+    - CaaSK8sAllowedVolumeTypesWorkloads.yaml
+    - CaaSK8sCapabilitiesWorkloads.yaml
+    - CaaSK8sPrivilegedContainerWorkloads.yaml
+    - CaaSK8sReadOnlyRootFilesystemWorkloads.yaml
+    - CaaSK8sSELinuxWorkloads.yaml
+    - CaaSK8sBlockPodsOnEtcdAndControlplane.yaml
+    - CaaSK8sHostNetworkUsage.yaml
+    - CaaSK8sDisallowSharedHostPIDAndIPCNamespaces.yaml
+    - CaaSK8sSeccompProfile.yaml

@@ -10,3 +10,5 @@ spec:
     kinds:
       - apiGroups: ["extensions", "networking.k8s.io"]
         kinds: ["Ingress"]
+  parameters:
+    exemptImages: []

@@ -3,15 +3,18 @@ kind: CaaSK8sAllowedUsersWorkloads
 metadata:
   name: pods-allowed-user-ranges-workloads
   labels:
-    type: global
+    type: namespaced
 spec:
-  enforcementAction: dryrun
+  enforcementAction: deny
   match:
     excludedNamespaces: []
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
+      - apiGroups: ["batch"]
+        kinds: ["Job"]
   parameters:
+    exemptImages: []
     runAsUser:
       rule: MustRunAsNonRoot # MustRunAs # RunAsAny
     runAsGroup:

@@ -1,15 +1,14 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: CaaSK8sReadOnlyRootFilesystem
+kind: CaaSK8sBlockPodsOnEtcdAndControlplane
 metadata:
-  name: must-have-readonlyrootfilesystem
+  name: block-pods-on-etcd-and-controlplane
   labels:
     type: namespaced
 spec:
   enforcementAction: deny
   match:
-    excludedNamespaces: []
     kinds:
-      - apiGroups: [""]
-        kinds: ["Pod"]
+    - apiGroups: [""]
+      kinds: ["Pod"]
   parameters:
     exemptImages: []

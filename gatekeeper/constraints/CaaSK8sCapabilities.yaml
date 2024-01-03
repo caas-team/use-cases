@@ -12,4 +12,5 @@ spec:
       - apiGroups: [""]
         kinds: ["Pod"]
   parameters:
+    exemptImages: []
     requiredDropCapabilities: ["ALL"]

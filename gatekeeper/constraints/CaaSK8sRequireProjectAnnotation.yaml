@@ -16,3 +16,5 @@ spec:
     kinds:
       - apiGroups: [""]
         kinds: ["Namespace"]
+  parameters:
+    exemptImages: []

@@ -12,6 +12,7 @@ spec:
       - apiGroups: [""]
         kinds: ["Pod"]
   parameters:
+    exemptImages: []
     runAsUser:
       rule: MustRunAsNonRoot # MustRunAs # RunAsAny
     runAsGroup:

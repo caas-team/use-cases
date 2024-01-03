@@ -1,7 +1,7 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: CaaSK8sReadOnlyRootFilesystem
+kind: CaaSK8sSeccompProfile
 metadata:
-  name: must-have-readonlyrootfilesystem
+  name: ensure-seccomp-profile-set-to-docker-default
   labels:
     type: namespaced
 spec:
@@ -13,3 +13,7 @@ spec:
         kinds: ["Pod"]
   parameters:
     exemptImages: []
+    allowedProfiles:
+    - runtime/default
+    - docker/default
+    - not configured #in case security context is not present

@@ -12,5 +12,6 @@ spec:
       - apiGroups: [""]
         kinds: ["Pod"]
   parameters:
+    exemptImages: []
     allowedSELinuxOptions:
       - user: RunAsAny

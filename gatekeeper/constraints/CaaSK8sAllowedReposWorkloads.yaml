@@ -5,16 +5,20 @@ metadata:
   labels:
     type: global
 spec:
-  enforcementAction: dryrun
+  enforcementAction: deny
   match:
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
+      - apiGroups: ["batch"]
+        kinds: ["Job"]
   parameters:
+    exemptImages: []
     repos:
       - dockerhub.devops.telekom.de/
       - artifactory.devops.telekom.de/
       - registry.devops.telekom.de/
+      - registry-internal.devops.telekom.de/
       - crm-fn-wbench.workbench.telekom.de/
       - sdm-wbench.workbench.telekom.de/
       - mtr.devops.telekom.de/

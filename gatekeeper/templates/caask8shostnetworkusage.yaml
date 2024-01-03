@@ -1,21 +1,25 @@
-apiVersion: templates.gatekeeper.sh/v1beta1
+apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
-  name: caask8sreadonlyrootfilesystem
+  name: caask8shostnetworkusage
   annotations:
+    metadata.gatekeeper.sh/title: "Host Networking Ports"
+    metadata.gatekeeper.sh/version: 1.0.1
     description: >-
-      Requires the use of a read-only root file system by pod containers.
+      Controls usage of host network namespace by pod containers. Specific
+      ports must be specified.
 spec:
   crd:
     spec:
       names:
-        kind: CaaSK8sReadOnlyRootFilesystem
+        kind: CaaSK8sHostNetworkUsage
       validation:
         # Schema for the `parameters` field
         openAPIV3Schema:
           type: object
           description: >-
-            Requires the use of a read-only root file system by pod containers.
+            Controls usage of host network namespace by pod containers. Specific
+            ports must be specified.
           properties:
             exemptImages:
               description: >-
@@ -27,42 +31,67 @@ spec:
               type: array
               items:
                 type: string
+            hostNetwork:
+              description: "Determines if the policy allows the use of HostNetwork in the pod spec."
+              type: boolean
+            min:
+              description: "The start of the allowed port range, inclusive."
+              type: integer
+            max:
+              description: "The end of the allowed port range, inclusive."
+              type: integer
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
-        package k8sreadonlyrootfilesystem
+        package k8shostnetworkingports
 
+        import data.lib.exclude_update.is_update
         import data.lib.exempt_container.is_exempt
 
         violation[{"msg": msg, "details": {}}] {
-            c := input_containers[_]
-            not is_exempt(c)
-            input_read_only_root_fs(c)
-            msg := sprintf("only read-only root filesystem container is allowed: %v", [c.name])
+            # spec.hostNetwork field is immutable.
+            not is_update(input.review)
+
+            input_share_hostnetwork(input.review.object)
+            msg := sprintf("The specified hostNetwork and hostPort are not allowed, pod: %v. Allowed values: %v", [input.review.object.metadata.name, input.parameters])
         }
 
-        input_read_only_root_fs(c) {
-            not has_field(c, "securityContext")
+        input_share_hostnetwork(o) {
+            not input.parameters.hostNetwork
+            o.spec.hostNetwork
         }
-        input_read_only_root_fs(c) {
-            not c.securityContext.readOnlyRootFilesystem == true
+
+        input_share_hostnetwork(o) {
+            hostPort := input_containers[_].ports[_].hostPort
+            hostPort < input.parameters.min
+        }
+
+        input_share_hostnetwork(o) {
+            hostPort := input_containers[_].ports[_].hostPort
+            hostPort > input.parameters.max
         }
 
         input_containers[c] {
             c := input.review.object.spec.containers[_]
-        }
-        input_containers[c] {
-            c := input.review.object.spec.initContainers[_]
-        }
-        input_containers[c] {
-            c := input.review.object.spec.ephemeralContainers[_]
+            not is_exempt(c)
         }
 
-        # has_field returns whether an object has a field
-        has_field(object, field) = true {
-            object[field]
+        input_containers[c] {
+            c := input.review.object.spec.initContainers[_]
+            not is_exempt(c)
+        }
+
+        input_containers[c] {
+            c := input.review.object.spec.ephemeralContainers[_]
+            not is_exempt(c)
         }
       libs:
+        - |
+          package lib.exclude_update
+
+          is_update(review) {
+              review.operation == "UPDATE"
+          }
         - |
           package lib.exempt_container
 

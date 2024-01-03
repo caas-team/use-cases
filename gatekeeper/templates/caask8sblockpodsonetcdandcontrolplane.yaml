@@ -1,0 +1,55 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: caask8sblockpodsonetcdandcontrolplane
+  annotations:
+    description: >-
+      Users should not be able to deploy Pods on etcd or controlplane nodes.
+spec:
+  crd:
+    spec:
+      names:
+        kind: CaaSK8sBlockPodsOnEtcdAndControlplane
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package caask8sblockpodsonetcdandcontrolplane
+        import data.lib.helpers.is_etcd
+        import data.lib.helpers.is_controlplane
+
+        violation[{"msg": msg}] {
+          node := input.review.object.spec.nodeName
+          contains(node, "controlplane")
+          msg := sprintf("Pod <%v> is not allowed to run on control plane nodes. Use another nodeName.", [input.review.object.metadata.name])
+        }
+
+        violation[{"msg": msg}] {
+          node := input.review.object.spec.nodeName
+          contains(node, "etcd")
+          msg := sprintf("Pod <%v> is not allowed to run on etcd nodes. Use another nodeName.", [input.review.object.metadata.name])
+        }
+
+        violation[{"msg": msg}] {
+          pod := input.review.object
+          tolerations := pod.spec.tolerations
+          res := is_etcd(tolerations)
+          msg := sprintf("Pod <%v> has ETCD tolerations. Remove them to allow the pod to run.", [pod.metadata.name])
+        }
+
+        violation[{"msg": msg}] {
+          pod := input.review.object
+          tolerations := pod.spec.tolerations
+          res := is_controlplane(tolerations)
+          msg := sprintf("Pod <%v> has Control Plane tolerations. Remove them to allow the pod to run.", [pod.metadata.name])
+        }
+      libs:
+        - |
+          package lib.helpers
+
+          is_etcd(tolerations) {
+            tolerations[_].key == "node-role.kubernetes.io/etcd"
+          }
+
+          is_controlplane(tolerations) {
+            tolerations[_].key == "node-role.kubernetes.io/master"
+          }

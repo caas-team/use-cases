@@ -3,13 +3,16 @@ kind: CaaSK8sCapabilitiesWorkloads
 metadata:
   name: caask8scapabilitiesworkloads
   labels:
-    type: global
+    type: namespaced
 spec:
-  enforcementAction: dryrun
+  enforcementAction: deny
   match:
     excludedNamespaces: []
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
+      - apiGroups: ["batch"]
+        kinds: ["Job"]
   parameters:
+    exemptImages: []
     requiredDropCapabilities: ["ALL"]

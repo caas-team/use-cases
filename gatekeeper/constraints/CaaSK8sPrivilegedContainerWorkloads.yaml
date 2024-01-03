@@ -3,11 +3,15 @@ kind: CaaSK8sPrivilegedContainerWorkloads
 metadata:
   name: disallow-privileged-container-workloads
   labels:
-    type: global
+    type: namespaced
 spec:
-  enforcementAction: dryrun
+  enforcementAction: deny
   match:
     excludedNamespaces: []
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
+      - apiGroups: ["batch"]
+        kinds: ["Job"]
+  parameters:
+    exemptImages: []

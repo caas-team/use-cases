@@ -3,10 +3,12 @@ kind: CaaSK8sBlockWildcardIngress
 metadata:
   name: block-wildcard-ingress
   labels:
-    type: global
+    type: namespaced
 spec:
   enforcementAction: deny
   match:
     kinds:
       - apiGroups: ["extensions", "networking.k8s.io"]
         kinds: ["Ingress"]
+  parameters:
+    exemptImages: []

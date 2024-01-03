@@ -13,10 +13,12 @@ spec:
         kinds:
           - Pod
   parameters:
+    exemptImages: []
     repos:
       - dockerhub.devops.telekom.de/
       - artifactory.devops.telekom.de/
       - registry.devops.telekom.de/
+      - registry-internal.devops.telekom.de/
       - crm-fn-wbench.workbench.telekom.de/
       - sdm-wbench.workbench.telekom.de/
       - mtr.devops.telekom.de/

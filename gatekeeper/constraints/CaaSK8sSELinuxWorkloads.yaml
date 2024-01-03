@@ -3,14 +3,17 @@ kind: CaaSK8sSELinuxWorkloads
 metadata:
   name: policy-for-selinux-workloads
   labels:
-    type: global
+    type: namespaced
 spec:
-  enforcementAction: dryrun
+  enforcementAction: deny
   match:
     excludedNamespaces: []
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
+      - apiGroups: ["batch"]
+        kinds: ["Job"]
   parameters:
+    exemptImages: []
     allowedSELinuxOptions:
       - user: RunAsAny

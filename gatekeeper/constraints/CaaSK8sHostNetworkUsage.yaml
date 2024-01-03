@@ -1,7 +1,7 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: CaaSK8sReadOnlyRootFilesystem
+kind: CaaSK8sHostNetworkUsage
 metadata:
-  name: must-have-readonlyrootfilesystem
+  name: policy-for-host-network-usage
   labels:
     type: namespaced
 spec:
@@ -13,3 +13,6 @@ spec:
         kinds: ["Pod"]
   parameters:
     exemptImages: []
+    hostNetwork: true
+    min: 80
+    max: 9000
